@@ -6,13 +6,13 @@ import { TextInput } from "@inrixia/lib/components/TextInput";
 import { SwitchSetting } from "@inrixia/lib/components/SwitchSetting";
 import { availableTags } from "@inrixia/lib/makeTags";
 
-const defaultFilenameFormat = "{artist} - {album} - {title}";
+const defaultFilenameFormat = "{albumArtist} - {album} - {title}";
 export const settings = getSettings({
 	desiredDownloadQuality: AudioQuality.HiRes,
 	defaultDownloadPath: "",
 	alwaysUseDefaultPath: true,
 	filenameFormat: defaultFilenameFormat,
-	folderPathFormat: "{artist}/{album}", // Adicionado
+	folderPathFormat: "{albumArtist}/{album}", // Modificado
 	useRealMAX: true,
 });
 if (settings.filenameFormat === "") settings.filenameFormat = defaultFilenameFormat;
@@ -50,7 +50,7 @@ export const Settings = () => html`<div style="display: grid; grid-gap: 20px; ma
 	<${TextInput}
 		text=${settings.folderPathFormat}
 		onText=${(text: string) => {
-			if (text === "") settings.folderPathFormat = "{artist}/{album}";
+			if (text === "") settings.folderPathFormat = "{albumArtist}/{album}";
 			else settings.folderPathFormat = text;
 		}}
 		title="Folder path format"
