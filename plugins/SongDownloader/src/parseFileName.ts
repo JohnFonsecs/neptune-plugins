@@ -9,22 +9,24 @@ const sanitizeFilename = (filename: string): string => filename.replace(unsafeCh
 export const parseExtension = (filename: string) => filename.match(/\.([0-9a-z]+)(?:[\?#]|$)/i)?.[1] ?? undefined;
 const filePathFromInfo = ({ tags }: MetaTags, { manifest, manifestMimeType }: ExtendedPlayackInfo): string => {
 	let base = settings.filenameFormat;
+	let folderPath = settings.folderPathFormat;
 	for (const tag of availableTags) {
 		let tagValue = tags[tag];
 		if (Array.isArray(tagValue)) tagValue = tagValue[0];
 		if (tagValue === undefined) continue;
 		base = base.replaceAll(`{${tag}}`, sanitizeFilename(tagValue));
+		folderPath = folderPath.replaceAll(`{${tag}}`, sanitizeFilename(tagValue));
 	}
 	switch (manifestMimeType) {
 		case ManifestMimeType.Tidal: {
 			if (manifest.codecs === "mqa") {
-				return `${base}.mqa.flac`;
+				return `${folderPath}/${base}.mqa.flac`;
 			}
-			return `${base}.${manifest.codecs}`;
+			return `${folderPath}/${base}.${manifest.codecs}`;
 		}
 		case ManifestMimeType.Dash: {
 			const trackManifest = manifest.tracks.audios[0];
-			return `${base}.${trackManifest.codec.toLowerCase()}.m4a`;
+			return `${folderPath}/${base}.${trackManifest.codec.toLowerCase()}.m4a`;
 		}
 	}
 };

@@ -112,7 +112,7 @@ const downloadTrack = async (trackItem: TrackItem, updateMethods: ButtonMethods,
 	const metaTags = makeTags((await ExtendedMediaItem.get(trackId))!);
 	const pathInfo = parseFileName(await metaTags, await playbackInfo);
 
-	pathInfo.basePath = folderPath;
+	pathInfo.basePath = folderPath ?? settings.folderPathFormat; // Modificado
 	if (folderPath === undefined) {
 		updateMethods.set("Prompting for download path...");
 		const fileName = pathInfo.fileName;

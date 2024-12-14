@@ -12,6 +12,7 @@ export const settings = getSettings({
 	defaultDownloadPath: "",
 	alwaysUseDefaultPath: true,
 	filenameFormat: defaultFilenameFormat,
+	folderPathFormat: "{artist}/{album}", // Adicionado
 	useRealMAX: true,
 });
 if (settings.filenameFormat === "") settings.filenameFormat = defaultFilenameFormat;
@@ -45,5 +46,14 @@ export const Settings = () => html`<div style="display: grid; grid-gap: 20px; ma
 		}}
 		title="Filename format"
 		tooltip="Availble tags: ${availableTags.join(", ")}"
+	/>
+	<${TextInput}
+		text=${settings.folderPathFormat}
+		onText=${(text: string) => {
+			if (text === "") settings.folderPathFormat = "{artist}/{album}";
+			else settings.folderPathFormat = text;
+		}}
+		title="Folder path format"
+		tooltip="Available tags: ${availableTags.join(", ")}"
 	/>
 </div>`;
