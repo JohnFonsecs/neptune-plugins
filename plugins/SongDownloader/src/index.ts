@@ -101,15 +101,15 @@ ContextMenu.onOpen(async (contextSource, contextMenu, trackItems) => {
 
 const downloadTrack = async (trackItem: TrackItem, updateMethods: ButtonMethods, folderPath?: string) => {
 	let trackId = trackItem.id!;
-	// if (settings.useRealMAX && settings.desiredDownloadQuality === AudioQuality.HiRes) {
-	// 	updateMethods.set("Checking RealMAX for better quality...");
-	// 	const maxTrack = await MaxTrack.getMaxTrack(trackId);
-	// 	if (maxTrack !== false) trackId = +maxTrack.id!;
-	// }
+	if (settings.useRealMAX && settings.desiredDownloadQuality === AudioQuality.HiRes) {
+		updateMethods.set("Checking RealMAX for better quality...");
+		const maxTrack = await MaxTrack.getMaxTrack(trackId);
+		if (maxTrack !== false) trackId = +maxTrack.id!;
+	}
 
 	updateMethods.set("Fetching playback info & tags...");
 	const playbackInfo = PlaybackInfoCache.ensure(trackId, settings.desiredDownloadQuality);
-	const metaTags = makeTags((await ExtendedMediaItem.get(trackId))!);
+	const metaTags = makeTags((await ExtendedMediaItem.getTrack(trackId))!);
 	const pathInfo = parseFileName(await metaTags, await playbackInfo);
 
 	pathInfo.basePath = folderPath ?? settings.folderPathFormat; // Modificado
@@ -118,8 +118,9 @@ const downloadTrack = async (trackItem: TrackItem, updateMethods: ButtonMethods,
 		const fileName = pathInfo.fileName;
 		const dialogResult = await saveDialog({ defaultPath: `${folderPath ?? ""}${pathSeparator}${fileName}`, filters: [{ name: "", extensions: [fileName ?? "*"] }] });
 		if (dialogResult.canceled) return updateMethods.clear();
+		console.log(dialogResult);
 		const dialogParts = dialogResult.filePath.split(pathSeparator);
-		dialogParts.pop();
+		pathInfo.fileName = dialogParts.pop();
 		pathInfo.basePath = dialogParts.join(pathSeparator);
 	}
 
